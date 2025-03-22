@@ -1,0 +1,17 @@
+---
+- name: Actualizar sistema en Ubuntu/Debian
+  hosts: all
+  become: true
+  tasks:
+
+    - name: Actualizar la caché de paquetes
+      apt:
+        update_cache: yes
+
+    - name: Actualizar todos los paquetes instalados
+      apt:
+        upgrade: dist
+
+    - name: Eliminar paquetes obsoletos
+      apt:
+        autoremove: yes
