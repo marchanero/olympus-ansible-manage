@@ -2,12 +2,10 @@
 - name: Ping a todos los servidores Olympus
   hosts: Olympus
   gather_facts: false
-  
   tasks:
     - name: Verificar conectividad
-      ping:
+      ansible.builtin.ping:
       register: ping_result
-    
     - name: Mostrar resultados
-      debug:
+      ansible.builtin.debug:
         var: ping_result
