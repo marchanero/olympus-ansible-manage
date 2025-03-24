@@ -17,6 +17,18 @@
       changed_when: false
       ignore_errors: true
 
-    - name: Mostrar tiempo de ping
+    - name: Resumir resultados del ping
+      ansible.builtin.set_fact:
+        ping_summary: |
+          {% set lines = ping_command_result.stdout.split('\n') %}
+          {% set icmp_lines = lines | select("search", "^64 bytes") %}
+          {% for line in icmp_lines %}
+            {% set parts = line.split() %}
+            - ICMP: {{ parts[0] }}
+              TTL: {{ parts[4].split('=')[1] }}
+              Time: {{ parts[6].split('=')[1] }}
+          {% endfor %}
+
+    - name: Mostrar resumen del ping
       ansible.builtin.debug:
-        msg: "Tiempo de ping para {{ inventory_hostname }}:\n{{ ping_command_result.stdout }}"
+        var: ping_summary
