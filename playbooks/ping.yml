@@ -26,7 +26,7 @@
           {%- for line in icmp_lines -%}
             {%- set parts = line.split() -%}
             {%- set item = {"ICMP": parts[0], "TTL": parts[4].split('=')[1], "Time": parts[6].split('=')[1]} -%}
-            {%- do summary.append(item) -%}
+            {%- set summary = summary + [item] -%}
           {%- endfor -%}
           {{ summary }}
 
