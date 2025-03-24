@@ -29,16 +29,3 @@
             {%- set summary = summary + [item] -%}
           {%- endfor -%}
           {{ summary }}
-
-    - name: Mostrar resumen del ping
-      ansible.builtin.debug:
-        var: ping_summary
-
-    - name: Mostrar resumen del ping en tabla
-      ansible.builtin.debug:
-        msg: |
-          | ICMP Sequence | TTL | Time (ms) |
-          |---------------|-----|-----------|
-          {% for item in ping_summary %}
-          | {{ item.ICMP }} | {{ item.TTL }} | {{ item.Time }} |
-          {% endfor %}
