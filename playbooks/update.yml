@@ -5,13 +5,13 @@
   tasks:
 
     - name: Actualizar la caché de paquetes
-      apt:
-        update_cache: yes
+      ansible.builtin.apt:
+        update_cache: true
 
     - name: Actualizar todos los paquetes instalados
-      apt:
+      ansible.builtin.apt:
         upgrade: dist
 
     - name: Eliminar paquetes obsoletos
-      apt:
+      ansible.builtin.apt:
         autoremove: yes
