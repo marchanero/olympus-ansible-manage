@@ -1,0 +1,31 @@
+- name: Deploy Uptime Kuma
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: Ensure Docker Compose is installed
+      get_url:
+        url: https://github.com/docker/compose/releases/download/1.29.2/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: Create directory for Uptime Kuma
+      file:
+        path: root/uptime-kuma
+        state: directory
+        mode: '0755'
+
+    - name: Copy Docker Compose file
+      copy:
+        src: /home/robert/olympus-ansible-manage/playbooks/uptime_kum/docker-compose.yml
+        dest: /opt/uptime-kuma/docker-compose.yml
+
+    - name: Deploy Uptime Kuma with Docker Compose
+      command: docker-compose up -d
+      args:
+        chdir: /opt/uptime-kuma
