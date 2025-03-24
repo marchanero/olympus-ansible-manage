@@ -15,7 +15,7 @@
       register: ping_command_result
       changed_when: false
       ignore_errors: true
-      
+
     - name: Mostrar tiempo de ping
       ansible.builtin.debug:
         msg: "Tiempo de ping para {{ inventory_hostname }}:\n{{ ping_command_result.stdout }}"
