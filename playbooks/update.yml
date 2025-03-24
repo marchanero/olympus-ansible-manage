@@ -14,4 +14,4 @@
 
     - name: Eliminar paquetes obsoletos
       ansible.builtin.apt:
-        autoremove: yes
+        autoremove: true
