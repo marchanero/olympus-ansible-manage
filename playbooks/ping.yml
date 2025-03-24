@@ -19,15 +19,16 @@
 
     - name: Resumir resultados del ping
       ansible.builtin.set_fact:
-        ping_summary: |
-          {% set lines = ping_command_result.stdout.split('\n') %}
-          {% set icmp_lines = lines | select("search", "^64 bytes") %}
-          {% for line in icmp_lines %}
-            {% set parts = line.split() %}
-            - ICMP: {{ parts[0] }}
-              TTL: {{ parts[4].split('=')[1] }}
-              Time: {{ parts[6].split('=')[1] }}
-          {% endfor %}
+        ping_summary: >
+          {%- set summary = [] -%}
+          {%- set lines = ping_command_result.stdout.split('\n') -%}
+          {%- set icmp_lines = lines | select("search", "^64 bytes") -%}
+          {%- for line in icmp_lines -%}
+            {%- set parts = line.split() -%}
+            {%- set item = {"ICMP": parts[0], "TTL": parts[4].split('=')[1], "Time": parts[6].split('=')[1]} -%}
+            {%- do summary.append(item) -%}
+          {%- endfor -%}
+          {{ summary }}
 
     - name: Mostrar resumen del ping
       ansible.builtin.debug:
@@ -38,6 +39,6 @@
         msg: |
           | ICMP Sequence | TTL | Time (ms) |
           |---------------|-----|-----------|
-          {% for line in ping_summary.split('\n') %}
-          | {{ line.split()[1] }} | {{ line.split()[3] }} | {{ line.split()[5] }} |
+          {% for item in ping_summary %}
+          | {{ item.ICMP }} | {{ item.TTL }} | {{ item.Time }} |
           {% endfor %}
