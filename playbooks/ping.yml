@@ -5,7 +5,17 @@
   tasks:
     - name: Verificar conectividad
       ansible.builtin.ping:
-      register: ping_result
+
     - name: Mostrar resultados
       ansible.builtin.debug:
         var: ping_result
+
+    - name: Ejecutar comando ping del sistema (4 paquetes)
+      ansible.builtin.shell: ping -c 4 {{ inventory_hostname }}
+      register: ping_command_result
+      changed_when: false
+      ignore_errors: true
+      
+    - name: Mostrar tiempo de ping
+      ansible.builtin.debug:
+        msg: "Tiempo de ping para {{ inventory_hostname }}:\n{{ ping_command_result.stdout }}"
