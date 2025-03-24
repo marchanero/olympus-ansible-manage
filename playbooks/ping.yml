@@ -5,6 +5,7 @@
   tasks:
     - name: Verificar conectividad
       ansible.builtin.ping:
+      register: ping_result
 
     - name: Mostrar resultados
       ansible.builtin.debug:
