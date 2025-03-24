@@ -32,3 +32,12 @@
     - name: Mostrar resumen del ping
       ansible.builtin.debug:
         var: ping_summary
+
+    - name: Mostrar resumen del ping en tabla
+      ansible.builtin.debug:
+        msg: |
+          | ICMP Sequence | TTL | Time (ms) |
+          |---------------|-----|-----------|
+          {% for line in ping_summary.split('\n') %}
+          | {{ line.split()[1] }} | {{ line.split()[3] }} | {{ line.split()[5] }} |
+          {% endfor %}
