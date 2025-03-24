@@ -1,3 +1,4 @@
+# Archivo de inventario para Olympus
 [Olympus]
 #Alpha
 100.96.232.99 ansible_user=root ansible_ssh_pass=orangepi.
