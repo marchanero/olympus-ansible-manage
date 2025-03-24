@@ -1,8 +1,0 @@
-# Inventario Olympus
-[Olympus]
-100.96.232.99 ansible_user=root ansible_ssh_pass=orangepi.
-100.113.191.9 ansible_user=root ansible_ssh_pass=orangepi.
-100.74.86.98 ansible_user=root ansible_ssh_pass=orangepi.
-
-[Olympus:vars]
-ansible_ssh_common_args='-o StrictHostKeyChecking=no'
