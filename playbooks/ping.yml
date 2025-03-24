@@ -1,6 +1,6 @@
 ---
 - name: Ping a todos los servidores Olympus
-  hosts: Olympus
+  #hosts: Olympus
   gather_facts: false
   tasks:
     - name: Verificar conectividad
