@@ -1,6 +1,6 @@
 ---
 - name: Ping a todos los servidores Olympus
-  #hosts: Olympus
+  hosts: "{{ target_group }}"
   gather_facts: false
   tasks:
     - name: Verificar conectividad
