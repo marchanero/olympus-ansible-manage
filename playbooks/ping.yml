@@ -1,0 +1,13 @@
+---
+- name: Ping a todos los servidores Olympus
+  hosts: Olympus
+  gather_facts: false
+  
+  tasks:
+    - name: Verificar conectividad
+      ping:
+      register: ping_result
+    
+    - name: Mostrar resultados
+      debug:
+        var: ping_result
