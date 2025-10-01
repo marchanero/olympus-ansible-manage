@@ -40,11 +40,10 @@
         dest: /opt/uptime-kuma/docker-compose.yml
         mode: '0644'
 
-    - name: Deploy Uptime Kuma with Docker Compose (community.docker)
-      community.docker.docker_compose:
+    - name: Deploy Uptime Kuma with Docker Compose v2 (community.docker)
+      community.docker.docker_compose_v2:
         project_src: /opt/uptime-kuma
-        build: no
-        state: present
+        present: true
 
     - name: Deploy Uptime Kuma with Docker Compose
       command: docker-compose up -d

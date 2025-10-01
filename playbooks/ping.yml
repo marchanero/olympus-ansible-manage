@@ -12,7 +12,8 @@
         var: ping_result
 
     - name: Ejecutar comando ping del sistema (4 paquetes)
-      ansible.builtin.shell: ping -c 4 {{ inventory_hostname }}
+      ansible.builtin.command:
+        cmd: ping -c 4 {{ inventory_hostname }}
       register: ping_command_result
       changed_when: false
       ignore_errors: true
