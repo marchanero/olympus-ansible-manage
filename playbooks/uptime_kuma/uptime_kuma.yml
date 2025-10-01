@@ -13,6 +13,7 @@
         cmd: docker compose version
       register: docker_compose_check
       failed_when: false
+      changed_when: false
 
     - name: Install docker-compose binary fallback
       ansible.builtin.get_url:
