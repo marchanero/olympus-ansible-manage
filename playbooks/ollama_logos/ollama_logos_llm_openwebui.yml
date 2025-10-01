@@ -1,0 +1,8 @@
+---
+- name: Placeholder playbook for ollama_logos_llm_openwebui
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Placeholder task
+      ansible.builtin.debug:
+        msg: "Este playbook es un placeholder. Reemplazar con tareas reales cuando estén listas."

@@ -1,0 +1,11 @@
+---
+
+---
+- name: Placeholder playbook for ollama_update_models
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Placeholder task
+      ansible.builtin.debug:
+        msg: "Este playbook es un placeholder para actualizar modelos. Reemplazar con tareas reales cuando estén listas."
+
