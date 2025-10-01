@@ -1,0 +1,31 @@
+# Configuración básica para ansible-lint
+# Más opciones y reglas pueden añadirse según las necesidades del repositorio.
+---
+
+# Lista de identificadores de reglas a saltar (útil para reglas que no apliquen
+# al proyecto). Mantener vacía por defecto.
+
+skip_list: []
+
+# Reglas recomendadas a tratar como advertencias (warn_list) en lugar de fallos
+warn_list:
+  - ANSIBLE0006
+  - ANSIBLE0012
+  - ANSIBLE201
+
+# Rutas o patrones a excluir del escaneo (usar la clave compatible `exclude_paths`)
+exclude_paths:
+  - .github
+  - .venv
+  - tests
+  - roles/**/molecule
+
+# Verbosidad (0 = mínima)
+verbosity: 0
+
+# Directorios adicionales con reglas personalizadas (vacío por defecto)
+rulesdir: []
+
+# Notas:
+# - Ajusta `skip_list` y `warn_list` según las necesidades del repositorio.
+# - Para personalizar reglas más finamente, puedes añadir plugins en `rulesdir`.
