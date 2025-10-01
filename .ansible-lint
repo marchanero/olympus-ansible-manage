@@ -4,28 +4,21 @@
 
 # Lista de identificadores de reglas a saltar (útil para reglas que no apliquen
 # al proyecto). Mantener vacía por defecto.
+
 skip_list: []
 
 # Reglas recomendadas a tratar como advertencias (warn_list) en lugar de fallos
-# Puedes mover alguna de estas a `skip_list` si no son relevantes.
-# IDs comunes:
-# - ANSIBLE0006: Use shell/command only when no module exists (prefer modules)
-# - ANSIBLE0012: Commands should not change things if there is a module
-# - ANSIBLE201: Packages should use package manager modules (apt/yum)
 warn_list:
   - ANSIBLE0006
   - ANSIBLE0012
   - ANSIBLE201
 
-# Rutas o patrones a excluir del escaneo (por ejemplo artefactos o CI)
-exclude:
+# Rutas o patrones a excluir del escaneo (usar la clave compatible `exclude_paths`)
+exclude_paths:
   - .github
   - .venv
   - tests
   - roles/**/molecule
-
-# Formato de salida (por defecto)
-format: default
 
 # Verbosidad (0 = mínima)
 verbosity: 0
