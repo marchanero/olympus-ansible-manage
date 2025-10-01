@@ -1,0 +1,66 @@
+---
+- name: Mantenimiento del sistema (actualizar, limpiar y comprobar reinicio)
+  hosts: "{{ target_group | default('all') }}"
+  become: true
+  vars:
+    # Si quieres que el playbook reinicie automáticamente cuando sea necesario,
+    # llama al playbook con -e "auto_reboot=true". Por defecto no reinicia.
+    auto_reboot: false
+  tags: [maintenance]
+  tasks:
+    - name: Actualizar la caché de paquetes (apt)
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Actualizar todos los paquetes instalados (upgrade dist)
+      ansible.builtin.apt:
+        upgrade: dist
+
+    - name: Eliminar paquetes obsoletos
+      ansible.builtin.apt:
+        autoremove: true
+
+    - name: Limpiar paquetes descargados (autoclean)
+      ansible.builtin.apt:
+        autoclean: true
+
+    - name: Comprobar si se requiere reinicio (Debian/Ubuntu crea /var/run/reboot-required)
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_required
+
+    - name: Mostrar recomendación de reinicio si aplica
+      ansible.builtin.debug:
+        msg: "REBOOT REQUIRED on {{ inventory_hostname }}"
+      when: reboot_required.stat.exists
+
+    - name: Reiniciar automáticamente si se solicita y es necesario
+      ansible.builtin.reboot:
+        reboot_timeout: 600
+        msg: "Reboot triggered by system_maintenance playbook"
+      when: (auto_reboot | default(false) | bool) and reboot_required.stat.exists
+
+    - name: Mostrar uso de disco en /
+      ansible.builtin.command:
+        cmd: df -h / --output=target,pcent
+      register: disk_root
+      changed_when: false
+
+    - name: Reporte uso de disco
+      ansible.builtin.debug:
+        var: disk_root.stdout_lines
+
+    - name: Listar paquetes recientemente actualizados (últimas 20 entradas apt history)
+      ansible.builtin.shell: |
+        if [ -f /var/log/apt/history.log ]; then
+          tail -n 40 /var/log/apt/history.log || true
+        else
+          echo "No apt history log found"
+        fi
+      register: apt_history
+      changed_when: false
+
+    - name: Mostrar resumen de apt history
+      ansible.builtin.debug:
+        var: apt_history.stdout_lines
