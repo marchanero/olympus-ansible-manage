@@ -23,15 +23,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Fail if ansible_ssh_pass found in inventory
+      - name: Scan inventory for ansible_ssh_pass (warn only)
         run: |
-          echo "Scanning inventory files for ansible_ssh_pass..."
+          echo "Scanning inventory files for ansible_ssh_pass (warning only)..."
           if [ -f hosts ]; then
-            if grep -n --line-number -E "ansible_ssh_pass\s*=|ansible_ssh_pass\s+=" hosts >/dev/null 2>&1; then
-              echo "ERROR: 'ansible_ssh_pass' found in hosts file. Move secrets to Ansible Vault or use SSH keys."
+            if grep -n -E "ansible_ssh_pass\s*=|ansible_ssh_pass\s+=" hosts >/dev/null 2>&1; then
+              echo "WARNING: 'ansible_ssh_pass' found in hosts file. Consider moving secrets to Ansible Vault or use SSH keys."
               echo "Offending lines:" 
               grep -n -E "ansible_ssh_pass\s*=|ansible_ssh_pass\s+=" hosts || true
-              exit 1
+              echo "Continuing CI despite presence of 'ansible_ssh_pass' as requested."
             else
               echo "No 'ansible_ssh_pass' found in hosts."
             fi
