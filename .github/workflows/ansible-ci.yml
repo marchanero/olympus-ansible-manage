@@ -1,0 +1,82 @@
+name: Ansible CI
+
+on:
+  push:
+    paths:
+      - 'playbooks/**'
+      - 'roles/**'
+      - 'ansible.cfg'
+      - 'hosts'
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - 'playbooks/**'
+      - 'roles/**'
+      - 'ansible.cfg'
+      - 'hosts'
+
+jobs:
+  lint-and-syntax-check:
+    name: Lint & Syntax Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fail if ansible_ssh_pass found in inventory
+        run: |
+          echo "Scanning inventory files for ansible_ssh_pass..."
+          if [ -f hosts ]; then
+            if grep -n --line-number -E "ansible_ssh_pass\s*=|ansible_ssh_pass\s+=" hosts >/dev/null 2>&1; then
+              echo "ERROR: 'ansible_ssh_pass' found in hosts file. Move secrets to Ansible Vault or use SSH keys."
+              echo "Offending lines:" 
+              grep -n -E "ansible_ssh_pass\s*=|ansible_ssh_pass\s+=" hosts || true
+              exit 1
+            else
+              echo "No 'ansible_ssh_pass' found in hosts."
+            fi
+          else
+            echo "No hosts file found at repo root; skipping inventory scan."
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Show Python and Git versions
+        run: |
+          python --version
+          git --version
+
+      - name: Install Ansible and ansible-lint
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible ansible-lint
+
+      - name: Show ansible and ansible-lint versions
+        run: |
+          ansible --version
+          ansible-lint --version
+
+      - name: Run ansible-lint on all playbooks
+        run: |
+          set -e
+          echo "Finding playbooks and running ansible-lint..."
+          files=$(find playbooks -type f \( -name "*.yml" -o -name "*.yaml" \) -print)
+          if [ -z "$files" ]; then
+            echo "No playbooks found under playbooks/"
+          else
+            echo "$files" | xargs ansible-lint
+          fi
+
+      - name: Run ansible-playbook --syntax-check for each playbook
+        env:
+          ANSIBLE_DEPRECATION_WARNINGS: 'False'
+        run: |
+          set -e
+          echo "Running ansible-playbook --syntax-check against discovered playbooks"
+          find playbooks -type f \( -name "*.yml" -o -name "*.yaml" \) -print0 | while IFS= read -r -d '' file; do
+            echo "-- syntax check: $file --"
+            ansible-playbook -i hosts --syntax-check "$file"
+          done
