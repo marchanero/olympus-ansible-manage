@@ -16,5 +16,4 @@
         cmd: ping -c 4 {{ inventory_hostname }}
       register: ping_command_result
       changed_when: false
-      ignore_errors: true
-
+  ignore_errors: true

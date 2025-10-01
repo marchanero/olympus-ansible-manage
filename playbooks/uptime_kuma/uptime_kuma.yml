@@ -6,7 +6,7 @@
       ansible.builtin.apt:
         name: docker.io
         state: present
-        update_cache: yes
+        update_cache: true
 
     - name: Ensure Docker Compose plugin (or binary) is available
       ansible.builtin.command:
@@ -43,9 +43,12 @@
     - name: Deploy Uptime Kuma with Docker Compose v2 (community.docker)
       community.docker.docker_compose_v2:
         project_src: /opt/uptime-kuma
-        present: true
+        state: present
 
-    - name: Deploy Uptime Kuma with Docker Compose
-      command: docker-compose up -d
+    - name: Ensure Docker Compose fallback run (if needed)
+      ansible.builtin.command:
+        cmd: docker-compose up -d
       args:
         chdir: /opt/uptime-kuma
+      register: compose_up
+      changed_when: compose_up.rc == 0
