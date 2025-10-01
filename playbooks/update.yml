@@ -1,6 +1,6 @@
 ---
 - name: Actualizar sistema en Ubuntu/Debian
-  hosts: "{{ target_group }}"
+  hosts: "{{ target_group | default('all') }}"
   become: true
   vars:
     ansible_connection: ssh

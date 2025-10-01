@@ -1,6 +1,6 @@
 ---
 - name: Ping a todos los servidores Olympus
-  hosts: "{{ target_group }}"
+  hosts: "{{ target_group | default('all') }}"
   gather_facts: false
   tasks:
     - name: Verificar conectividad

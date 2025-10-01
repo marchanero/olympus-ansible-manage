@@ -3,27 +3,48 @@
   become: true
   tasks:
     - name: Ensure Docker is installed
-      apt:
+      ansible.builtin.apt:
         name: docker.io
         state: present
         update_cache: yes
 
-    - name: Ensure Docker Compose is installed
-      get_url:
+    - name: Ensure Docker Compose plugin (or binary) is available
+      ansible.builtin.command:
+        cmd: docker compose version
+      register: docker_compose_check
+      failed_when: false
+
+    - name: Install docker-compose binary fallback
+      ansible.builtin.get_url:
         url: https://github.com/docker/compose/releases/download/1.29.2/docker-compose-{{ ansible_system }}-{{ ansible_architecture }}
         dest: /usr/local/bin/docker-compose
         mode: '0755'
+      when: docker_compose_check.rc != 0
 
     - name: Create directory for Uptime Kuma
-      file:
-        path: root/uptime-kuma
+      ansible.builtin.file:
+        path: /opt/uptime-kuma
         state: directory
         mode: '0755'
 
+    - name: Ensure correct permissions on directory
+      ansible.builtin.file:
+        path: /opt/uptime-kuma
+        mode: '0755'
+        owner: root
+        group: root
+
     - name: Copy Docker Compose file
-      copy:
-        src: /home/robert/olympus-ansible-manage/playbooks/uptime_kum/docker-compose.yml
+      ansible.builtin.copy:
+        src: /home/robert/olympus-ansible-manage/playbooks/uptime_kuma/docker-compose.yml
         dest: /opt/uptime-kuma/docker-compose.yml
+        mode: '0644'
+
+    - name: Deploy Uptime Kuma with Docker Compose (community.docker)
+      community.docker.docker_compose:
+        project_src: /opt/uptime-kuma
+        build: no
+        state: present
 
     - name: Deploy Uptime Kuma with Docker Compose
       command: docker-compose up -d
